@@ -1,1 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mairard — Character Registration Bot</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple-deep:  #150d2e;
+    --purple-dark:  #1e1245;
+    --purple-mid:   #2e1a6e;
+    --purple-light: #4a2fa0;
+    --blue-royal:   #1a3a9f;
+    --blue-light:   #3a6fd8;
+    --gold:         #f0c040;
+    --gold-light:   #ffe080;
+    --gold-dark:    #a07820;
+    --gold-border:  #c09030;
+    --parchment:    #f5e9cc;
+    --parchment-dk: #ddd0a8;
+    --text-dark:    #1a0e0a;
+    --text-mid:     #3a2810;
+    --text-light:   #f0e8d0;
+    --red-flag:     #cc2222;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--purple-deep);
+    font-family: 'Crimson Text', serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ROSE Online header background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url('https://www.roseonlinegame.com/images/header.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    filter: brightness(0.35) saturate(0.8);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(21,13,46,0.3) 0%,
+      rgba(21,13,46,0.6) 50%,
+      rgba(21,13,46,0.85) 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    text-align: center;
+    padding: 40px 20px 24px;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .rose-logo {
+    height: 52px;
+    object-fit: contain;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+  }
+
+  .hero-image {
+    width: 100%;
+    max-width: 560px;
+    border-radius: 12px 12px 0 0;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 -8px 30px rgba(74,47,160,0.5));
+  }
+
+  /* ── MAIN CARD ── */
+  .main-card {
+    background: linear-gradient(170deg, #f5e9cc 0%, #e8d8a8 40%, #ddd0a8 100%);
+    border-radius: 16px;
+    border: 3px solid var(--gold-border);
+    box-shadow:
+      0 0 0 1px rgba(240,192,64,0.2),
+      0 8px 40px rgba(0,0,0,0.6),
+      inset 0 1px 0 rgba(255,255,255,0.4);
+    padding: 40px 48px 48px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+
+  /* Corner ornaments */
+  .main-card::before,
+  .main-card::after {
+    content: '✦';
+    position: absolute;
+    font-size: 28px;
+    color: var(--gold-border);
+    opacity: 0.6;
+  }
+  .main-card::before { top: 12px; left: 16px; }
+  .main-card::after  { bottom: 12px; right: 16px; }
+
+  /* ── TITLE BLOCK ── */
+  .title-block {
+    text-align: center;
+    margin-bottom: 36px;
+    padding-bottom: 28px;
+    border-bottom: 2px solid var(--gold-dark);
+    position: relative;
+  }
+
+  .title-block::after {
+    content: '⚔ ✦ ⚔';
+    display: block;
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--parchment);
+    padding: 0 12px;
+    color: var(--gold-dark);
+    font-size: 13px;
+    letter-spacing: 0.15em;
+  }
+
+  .bot-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 40px;
+    font-weight: 900;
+    color: var(--purple-mid);
+    text-shadow: 2px 2px 0 var(--gold-dark), 0 0 30px rgba(74,47,160,0.2);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .bot-subtitle {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    margin-bottom: 36px;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--purple-mid);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title::before { content: '§'; color: var(--gold-dark); font-size: 16px; }
+  .section-title::after  {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--gold-dark), transparent);
+  }
+
+  /* ── SETUP STEPS ── */
+  .setup-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .step {
+    background: rgba(255,255,255,0.35);
+    border: 1px solid var(--gold-border);
+    border-radius: 8px;
+    padding: 18px;
+    position: relative;
+  }
+
+  .step-num {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--purple-light);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .step-title {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    color: var(--text-mid);
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .step-desc {
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.4;
+  }
+
+  /* ── FLOW ── */
+  .flow {
+    display: flex;
+    align-items: stretch;
+  }
+
+  .flow-step {
+    flex: 1;
+    background: rgba(255,255,255,0.3);
+    border: 1px solid var(--gold-border);
+    padding: 14px 12px;
+    position: relative;
+  }
+
+  .flow-step:first-child { border-radius: 8px 0 0 8px; }
+  .flow-step:last-child  { border-radius: 0 8px 8px 0; }
+
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    color: var(--gold-dark);
+    font-size: 18px;
+    background: rgba(255,255,255,0.15);
+    border-top: 1px solid var(--gold-border);
+    border-bottom: 1px solid var(--gold-border);
+    padding: 0 3px;
+  }
+
+  .flow-num {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--purple-light);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .flow-title {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text-mid);
+    margin-bottom: 4px;
+  }
+
+  .flow-desc {
+    font-size: 11px;
+    color: #5a4020;
+    line-height: 1.4;
+  }
+
+  .flow-cmd {
+    font-family: monospace;
+    font-size: 10px;
+    color: var(--purple-mid);
+    margin-top: 4px;
+    display: block;
+    font-weight: bold;
+  }
+
+  /* ── CMD LIST ── */
+  .cmd-list {
+    background: rgba(255,255,255,0.3);
+    border: 1px solid var(--gold-border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .cmd-item {
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    border-bottom: 1px solid rgba(192,144,48,0.25);
+    transition: background 0.15s;
+  }
+
+  .cmd-item:last-child { border-bottom: none; }
+  .cmd-item:hover { background: rgba(255,255,255,0.25); }
+
+  .cmd-cell {
+    padding: 10px 16px;
+  }
+
+  .cmd-name {
+    font-family: monospace;
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--purple-mid);
+  }
+
+  .cmd-param {
+    color: var(--gold-dark);
+    font-weight: normal;
+    font-size: 12px;
+  }
+
+  .cmd-desc {
+    font-size: 14px;
+    color: var(--text-mid);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .tag-log  { background: rgba(46,26,110,0.12); color: var(--purple-mid); border: 1px solid rgba(74,47,160,0.3); }
+  .tag-lcf  { background: rgba(26,58,159,0.1);  color: var(--blue-royal); border: 1px solid rgba(26,58,159,0.3); }
+  .tag-ocf  { background: rgba(20,100,50,0.1);  color: #1a6432;           border: 1px solid rgba(20,100,50,0.3); }
+  .tag-warn { background: rgba(180,30,30,0.1);  color: var(--red-flag);   border: 1px solid rgba(180,30,30,0.3); }
+
+  /* ── NOTES ── */
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .note {
+    background: rgba(255,255,255,0.3);
+    border: 1px solid var(--gold-border);
+    border-left: 4px solid var(--purple-light);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.5;
+  }
+
+  .note strong {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--purple-mid);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--gold-dark);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold-dark);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <img class="rose-logo" src="https://www.roseonlinegame.com/images/logo.webp" alt="ROSE Online">
+  </div>
+
+  <!-- MAIN CARD -->
+  <div class="main-card">
+
+    <!-- TITLE -->
+    <div class="title-block">
+      <div class="bot-name">Mairard</div>
+      <div class="bot-subtitle">Character Registration Bot</div>
+    </div>
+
+    <!-- SETUP -->
+    <div class="section">
+      <div class="section-title">Initial Setup</div>
+      <div class="setup-steps">
+        <div class="step">
+          <div class="step-num">I</div>
+          <div class="step-title">Invite the Bot</div>
+          <div class="step-desc">Add Mairard to your Discord server via the OAuth invite link.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">II</div>
+          <div class="step-title">/setup #channel</div>
+          <div class="step-desc">Set where all logs appear — registrations and admin actions both go here.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">III</div>
+          <div class="step-title">Ready</div>
+          <div class="step-desc">No roles or channels to create. Players register inside Ticket Tool tickets.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLOW -->
+    <div class="section">
+      <div class="section-title">Ticket Flow</div>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-num">1</div>
+          <div class="flow-title">Open Ticket</div>
+          <div class="flow-desc">Player opens a ticket via Ticket Tool.</div>
+        </div>
+        <div class="flow-arrow">›</div>
+        <div class="flow-step">
+          <div class="flow-num">2</div>
+          <div class="flow-title">Add Characters</div>
+          <div class="flow-desc">Player runs /addchar for each character.</div>
+          <span class="flow-cmd">/addchar</span>
+        </div>
+        <div class="flow-arrow">›</div>
+        <div class="flow-step">
+          <div class="flow-num">3</div>
+          <div class="flow-title">Auto Log</div>
+          <div class="flow-desc">Each addition is posted to the log channel.</div>
+        </div>
+        <div class="flow-arrow">›</div>
+        <div class="flow-step">
+          <div class="flow-num">4</div>
+          <div class="flow-title">Approval</div>
+          <div class="flow-desc">Admin reviews and assigns LCF or OCF role manually.</div>
+        </div>
+        <div class="flow-arrow">›</div>
+        <div class="flow-step">
+          <div class="flow-num">5</div>
+          <div class="flow-title">Done</div>
+          <div class="flow-desc">Ticket gets closed by Ticket Tool.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLAYER COMMANDS -->
+    <div class="section">
+      <div class="section-title">Player Commands</div>
+      <div class="cmd-list">
+        <div class="cmd-item">
+          <div class="cmd-cell"><div class="cmd-name">/addchar <span class="cmd-param">[cat] [name] [class] [clan]</span></div></div>
+          <div class="cmd-cell"><div class="cmd-desc"><span class="tag tag-log">LOGGED</span> Register a character. Pick LCF or OCF, then fill in the details.</div></div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-cell"><div class="cmd-name">/remove_char</div></div>
+          <div class="cmd-cell"><div class="cmd-desc"><span class="tag tag-log">LOGGED</span> Pick a character from your list to remove.</div></div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-cell"><div class="cmd-name">/my_chars</div></div>
+          <div class="cmd-cell"><div class="cmd-desc">See all your registered characters, split by <span class="tag tag-lcf">LCF</span> and <span class="tag tag-ocf">OCF</span>.</div></div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-cell"><div class="cmd-name">/help</div></div>
+          <div class="cmd-cell"><div class="cmd-desc">Show all available commands and the ticket flow guide.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN COMMANDS -->
+    <div class="section">
+      <div class="section-title">Admin Commands</div>
+      <div class="cmd-list">
+        <div class="cmd-item">
+          <div class="cmd-cell"><div class="cmd-name">/setup <span class="cmd-param">[channel]</span></div></div>
+          <div class="cmd-cell"><div class="cmd-desc">Set the log channel for all bot activity.</div></div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-cell"><div class="cmd-name">/admin_add <span class="cmd-param">[@user] [cat] ...</span></div></div>
+          <div class="cmd-cell"><div class="cmd-desc"><span class="tag tag-log">LOGGED</span> Add a character for any player. Assigns LCF or OCF role automatically.</div></div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-cell"><div class="cmd-name">/admin_delete <span class="cmd-param">[@user] [cat]</span></div></div>
+          <div class="cmd-cell"><div class="cmd-desc"><span class="tag tag-log">LOGGED</span> Select a player's character to soft-delete.</div></div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-cell"><div class="cmd-name">/admin_edit <span class="cmd-param">[@user] [cat]</span></div></div>
+          <div class="cmd-cell"><div class="cmd-desc"><span class="tag tag-log">LOGGED</span> Edit a player's character via a pre-filled form.</div></div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-cell"><div class="cmd-name">/list</div></div>
+          <div class="cmd-cell"><div class="cmd-desc">Full character list split by <span class="tag tag-lcf">LCF</span> and <span class="tag tag-ocf">OCF</span>.</div></div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-cell"><div class="cmd-name">/search <span class="cmd-param">[query]</span></div></div>
+          <div class="cmd-cell"><div class="cmd-desc">Search by character name, clan or Discord user. Leave empty for the full list.</div></div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-cell"><div class="cmd-name">/deleted_chars</div></div>
+          <div class="cmd-cell"><div class="cmd-desc">See the last 50 removed characters with their removal dates.</div></div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-cell"><div class="cmd-name">/export</div></div>
+          <div class="cmd-cell"><div class="cmd-desc">Download all active registrations as a CSV file.</div></div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-cell"><div class="cmd-name">/import_data <span class="cmd-param">[file]</span></div></div>
+          <div class="cmd-cell"><div class="cmd-desc"><span class="tag tag-log">LOGGED</span> Bulk-import registrations by uploading a CSV.</div></div>
+        </div>
+        <div class="cmd-item">
+          <div class="cmd-cell"><div class="cmd-name">/purge</div></div>
+          <div class="cmd-cell"><div class="cmd-desc"><span class="tag tag-warn">DESTRUCTIVE</span> Wipe all registration data for this server. Requires confirmation.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="section">
+      <div class="section-title">Notes</div>
+      <div class="notes-grid">
+        <div class="note"><strong>Soft Deletes</strong>Removed characters stay in the database. Full history available via /deleted_chars.</div>
+        <div class="note"><strong>Unique Names</strong>Character names are unique per player, case-insensitive.</div>
+        <div class="note"><strong>Role Assignment</strong>/admin_add assigns roles automatically. The /addchar flow is manual by design.</div>
+        <div class="note"><strong>Guild Locked</strong>Bot auto-leaves any server it's not authorised for. All data is server-isolated.</div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      Mairard &nbsp;·&nbsp; Developed by @suffokate &nbsp;·&nbsp; ROSE Online ✦ Sea of Souls
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
 
